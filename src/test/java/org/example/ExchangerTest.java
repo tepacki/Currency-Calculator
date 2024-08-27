@@ -1,8 +1,8 @@
+package org.example;
 
-import org.example.ExchangeRates;
-import org.example.Exchanger;
-import org.example.Rates;
-import org.example.Result;
+import org.example.exchangers.Exchanger;
+import org.example.exchangers.Result;
+import org.example.models.Rates;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -16,12 +16,11 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ExchangerTest {
     List<Rates> rates = List.of(new Rates("Dolar Amerykanski", "USD", 4.2), new Rates("Forint", "HUF", 0.011));
-    ExchangeRates exchangeRates = new ExchangeRates("a", "no.1", "29-07-2024", rates);
     Exchanger exchanger = new Exchanger(rates);
 
     @Test
     public void validAmountBuyTest() {
-        assertEquals(952.38, exchanger.buyCurrency("USD", 4000).getExchanged());
+        assertEquals(952.38, exchanger.buyCurrency("USD", 4000).exchanged());
     }
 
     @Test
@@ -36,7 +35,7 @@ public class ExchangerTest {
 
     @Test
     public void validAmountSellTest() {
-        assertEquals(420, exchanger.sellCurrency("USD", 100).getExchanged());
+        assertEquals(420, exchanger.sellCurrency("USD", 100).exchanged());
     }
 
     @Test
@@ -53,7 +52,7 @@ public class ExchangerTest {
     public void validInputAmountBuyRateTest() {
         String simulatedInput = "USD\n4000\n";
         Scanner scanner = new Scanner(simulatedInput);
-        assertEquals(952.38, exchanger.buyCurrency(scanner).getExchanged());
+        assertEquals(952.38, exchanger.buyCurrency(scanner).exchanged());
     }
 
     @Test
@@ -63,16 +62,16 @@ public class ExchangerTest {
 
         Result result = exchanger.buyCurrency(scanner);
         assertNotNull(result);
-        assertEquals("USD", result.getCode());
-        assertEquals(4000, result.getAmount(), 0.0);
-        assertEquals(952.38, result.getExchanged(), 0.01); // 50 * 4.5 = 225.0
+        assertEquals("USD", result.code());
+        assertEquals(4000, result.amount(), 0.0);
+        assertEquals(952.38, result.exchanged(), 0.01);
     }
 
     @Test
     public void validInputAmountSellRateTest() {
         String simulatedInput = "USD\n100\n";
         Scanner scanner = new Scanner(simulatedInput);
-        assertEquals(420, exchanger.sellCurrency(scanner).getExchanged());
+        assertEquals(420, exchanger.sellCurrency(scanner).exchanged());
     }
 
     @Test
@@ -82,10 +81,9 @@ public class ExchangerTest {
 
         Result result = exchanger.sellCurrency(scanner);
         assertNotNull(result);
-        assertEquals("USD", result.getCode());
-        assertEquals(50, result.getAmount(), 0.0);
-        assertEquals(210.0, result.getExchanged(), 0.01); // 50 * 4.5 = 225.0
+        assertEquals("USD", result.code());
+        assertEquals(50, result.amount(), 0.0);
+        assertEquals(210.0, result.exchanged(), 0.01);
     }
-
 
 }

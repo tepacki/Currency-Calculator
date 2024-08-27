@@ -1,8 +1,14 @@
-package org.example;
+package org.example.exchangers;
 
-import java.util.*;
+import org.example.models.Rates;
 
-import static org.example.RoundToTwoDecimal.roundToTwoDecimalPlaces;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+
+import org.decimal4j.util.DoubleRounder;
 
 public class Exchanger {
     private final List<Rates> ratesList;
@@ -11,7 +17,7 @@ public class Exchanger {
     public Exchanger(List<Rates> ratesList) {
         this.ratesList = ratesList;
         for (Rates rates : ratesList) {
-            ratesMap.put(rates.getCode(), rates.getMid());
+            ratesMap.put(rates.code(), rates.mid());
         }
     }
 
@@ -26,23 +32,17 @@ public class Exchanger {
         double amount;
         String action = "buy";
 
-        do {
+        while (true) {
             System.out.println("Please enter the currency code you would like to buy: ");
             code = scanner.nextLine().toUpperCase();
-
-            try {
-                if (ratesMap.containsKey(code)) {
-                    rate = ratesMap.get(code);
-                    break;
-                } else {
-                    throw new NullPointerException();
-                }
-            } catch (NullPointerException e) {
-                System.out.println("invalid currency code");
+            if (ratesMap.containsKey(code)) {
+                rate = ratesMap.get(code);
+                break;
+            } else {
+                System.out.println("Invalid currency code");
             }
-        } while (true);
-
-        do {
+        }
+        while (true) {
             System.out.println("Please enter the amount of PLN you would like to use for the purchase: ");
             while (!scanner.hasNextDouble()) {
                 System.out.println("Invalid amount. Please enter a valid number.");
@@ -57,9 +57,9 @@ public class Exchanger {
                 break;
             }
 
-        } while (true);
+        }
 
-        exchanged = roundToTwoDecimalPlaces(amount / rate);
+        exchanged = DoubleRounder.round(amount / rate, 2);
         return new Result(code, amount, exchanged, action);
     }
 
@@ -69,22 +69,19 @@ public class Exchanger {
         String code;
         double amount;
         String action = "sell";
-        do {
+        while (true) {
             System.out.println("Please enter the currency code you would like to sell: ");
             code = scanner.nextLine().toUpperCase();
-            try {
-                if (ratesMap.containsKey(code)) {
-                    rate = ratesMap.get(code);
-                    break;
-                } else {
-                    throw new NullPointerException();
-                }
-            } catch (NullPointerException e) {
-                System.out.println("invalid currency code");
-            }
-        } while (true);
 
-        do {
+            if (ratesMap.containsKey(code)) {
+                rate = ratesMap.get(code);
+                break;
+            } else {
+                System.out.println("Invalid currency code");
+            }
+        }
+
+        while (true) {
             System.out.println("Please enter the amount of " + code + " you would like to sell: ");
             while (!scanner.hasNextDouble()) {
                 System.out.println("Invalid amount. Please enter a valid number.");
@@ -99,9 +96,9 @@ public class Exchanger {
                 break;
             }
 
-        } while (true);
+        }
 
-        exchanged = roundToTwoDecimalPlaces(amount * rate);
+        exchanged = DoubleRounder.round(amount * rate, 2);
         return new Result(code, amount, exchanged, action);
     }
 
@@ -123,7 +120,7 @@ public class Exchanger {
             return null;
         }
 
-        exchanged = roundToTwoDecimalPlaces(amount / rate);
+        exchanged = DoubleRounder.round(amount / rate, 2);
         return new Result(code, amount, exchanged, action);
     }
 
@@ -145,7 +142,7 @@ public class Exchanger {
             return null;
         }
 
-        exchanged = roundToTwoDecimalPlaces(amount * rate);
+        exchanged = DoubleRounder.round(rate * amount, 2);
         return new Result(code, amount, exchanged, action);
     }
 
