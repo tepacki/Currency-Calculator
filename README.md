@@ -1,1 +1,1 @@
-# zadanie2
+# Currency Calculator
